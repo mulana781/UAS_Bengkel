@@ -267,3 +267,4 @@ Route::middleware(['role:admin,manager,staff'])->group(function () {
 6 Run migrations: `php artisan migrate`7. Seed database: `php artisan db:seed --class=RoleSeeder`
 8Start server: `php artisan serve`
 
+**maaf pak tidak tau caranya menambahkan gambar pada readme di github jadi tidak saya upload**
