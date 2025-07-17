@@ -1,64 +1,269 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# Dokumentasi Bengkel Management System
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## 📋 Penjelasan Ringkas Proyek
 
-## About Laravel
+Bengkel Management System adalah aplikasi web berbasis Laravel yang menyediakan sistem manajemen lengkap untuk bengkel otomotif. Aplikasi ini mencakup fitur autentikasi multi-level, operasi CRUD untuk berbagai entitas, dan dashboard interaktif dengan visualisasi data.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 📁 Struktur Folder Proyek
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+```
+bengkel-management/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/           # Controller untuk semua fitur
+│   │   │   ├── AuthController.php      # Handle login, register, logout
+│   │   │   ├── CustomerController.php  # CRUD Customer
+│   │   │   ├── VehicleController.php   # CRUD Vehicle  
+│   │   │   ├── ServiceController.php   # CRUD Service
+│   │   │   ├── ServiceNoteController.php # CRUD ServiceNote
+│   │   │   └── DashboardController.php # Dashboard & statistik
+│   │   └── Middleware/
+│   │       └── CheckRole.php          # Middleware untuk role-based access
+│   └── Models/                    # Model Eloquent
+│       ├── User.php               # User dengan role relationship
+│       ├── Role.php               # Role model dengan permission
+│       ├── Customer.php           # Customer model
+│       ├── Vehicle.php            # Vehicle model
+│       ├── Service.php            # Service model
+│       └── ServiceNote.php        # ServiceNote model
+├── database/
+│   ├── migrations/                # Database migrations
+│   │   ├── create_roles_table.php
+│   │   ├── add_role_id_to_users_table.php
+│   │   ├── create_customers_table.php
+│   │   ├── create_vehicles_table.php
+│   │   ├── create_services_table.php
+│   │   └── create_service_notes_table.php
+│   └── seeders/
+│       └── RoleSeeder.php        # Seeder untuk roles & default users
+├── resources/
+│   └── views/
+│       ├── auth/                  # Halaman autentikasi
+│       │   ├── login.blade.php    # Form login
+│       │   └── register.blade.php # Form register
+│       ├── layouts/
+│       │   └── app.blade.php     # Layout utama dengan navbar
+│       ├── dashboard.blade.php    # Dashboard dengan charts
+│       ├── customers/             # Views CRUD Customer
+│       │   ├── index.blade.php
+│       │   ├── create.blade.php
+│       │   ├── edit.blade.php
+│       │   └── show.blade.php
+│       ├── vehicles/              # Views CRUD Vehicle
+│       ├── services/              # Views CRUD Service
+│       └── service-notes/         # Views CRUD ServiceNote
+├── routes/
+│   └── web.php                   # Route definitions dengan middleware
+└── public/                       # Assets (CSS, JS, images)
+```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 🔐 Alur Login hingga Dashboard
 
-## Learning Laravel
+### 1. Akses Aplikasi
+- User mengakses `http://localhost:800- Middleware `auth` mengecek status login user
+- Jika belum login → redirect ke `/login`
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 2laman Login
+- User melihat form login dengan design modern
+- Form berisi field email dan password
+- Validasi client-side dan server-side diterapkan
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 3Proses Autentikasi
+- User submit form login
+- `AuthController@login` memproses request
+- Validasi credentials menggunakan Laravel Auth
+- Jika berhasil → regenerate session dan redirect ke dashboard
+- Jika gagal → kembali ke form dengan error message
 
-## Laravel Sponsors
+### 4. Dashboard sesuai Role
+- **Admin**: Akses penuh ke semua menu
+- **Manager**: Akses ke customer, vehicle, service, service-notes
+- **Staff**: Akses ke service dan service-notes
+- **Customer**: Hanya dashboard dan profil
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+### 5. Session Management
+- Session disimpan dengan aman
+- CSRF protection pada semua form
+- Logout menghapus session dan regenerate token
 
-### Premium Partners
+## 🗄️ Alur CRUD: Customer Management
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+### Create (Tambah Data)
+1**Akses Halaman**
+   - User login dengan role yang memiliki permission
+   - Klik menu "Customers di navbar
+   - Klik tombolAdd Customerdi halaman index
 
-## Contributing
+2 **Form Input**
+   - Form create customer muncul
+   - Field: name, phone, address, email
+   - Validasi real-time dan server-side3**Proses Penyimpanan**
+   ```php
+   // CustomerController@store
+   $request->validate(name' =>required|string|max:255
+ phone' =>required|string|max:20,
+   address' => 'required|string',
+ email' => 'required|email|unique:customers,email',
+   ]);
+   
+   Customer::create($request->all());
+   return redirect()->route('customers.index)   ->with('success',Customer created successfully!');
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+4 **Feedback**
+   - Redirect ke halaman index
+   - Success message ditampilkan
+   - Data baru muncul di tabel
 
-## Code of Conduct
+### Read (Lihat Data)
+1**Halaman Index**
+   - Tabel menampilkan semua customer
+   - Pagination untuk data besar
+   - Search dan filter functionality
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+2. **Halaman Detail**
+   - Klik tombolViewpada baris data
+   - Menampilkan detail customer lengkap
+   - Relasi dengan vehicles dan services
 
-## Security Vulnerabilities
+### Update (Edit Data)
+1. **Akses Form Edit**
+   - Klik tombolEditpada baris data
+   - Form edit muncul dengan data yang sudah ada
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+2**Proses Update**
+   ```php
+   // CustomerController@update
+   $request->validate(name' =>required|string|max:255
+ phone' =>required|string|max:20,
+   address' => 'required|string',
+ email' => 'required|email|unique:customers,email,' . $customer->id,
+   ]);
+   
+   $customer->update($request->all());
+   return redirect()->route('customers.index)   ->with('success',Customer updated successfully!');
+   ```
 
-## License
+3 **Feedback**
+   - Redirect ke halaman index
+   - Success message ditampilkan
+   - Data terupdate di tabel
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Delete (Hapus Data)
+1. **Konfirmasi Delete**
+   - Klik tombolDeletepada baris data
+   - Konfirmasi dialog muncul
+   - User konfirmasi untuk menghapus
+
+2**Proses Delete**
+   ```php
+   // CustomerController@destroy
+   $customer->delete();
+   return redirect()->route('customers.index)   ->with('success',Customer deleted successfully!');
+   ```
+
+3 **Feedback**
+   - Redirect ke halaman index
+   - Success message ditampilkan
+   - Data terhapus dari tabel
+
+## 🛡️ Validasi Form
+
+### Server-side Validation
+Semua form menggunakan validasi Laravel:
+
+```php
+// Contoh validasi Customer
+$request->validate([
+    'name' =>required|string|max:255,
+    'phone' =>required|string|max:20,
+address' => 'required|string',
+    'email' => 'required|email|unique:customers,email,' . $customer->id,
+]);
+
+// Contoh validasi Service
+$request->validate(  vehicle_id' =>required|exists:vehicles,id,
+    date' =>required|date,  kilometer' => required|integer|min:0',
+    description' => 'required|string,status' => 'required|in:pending,in_progress,completed',
+]);
+```
+
+### Error Handling
+- Error ditampilkan di bawah field yang bermasalah
+- Old input dipertahankan untuk user experience
+- Custom error messages untuk bahasa Indonesia
+
+## 🔒 Middleware dan Security
+
+### Authentication Middleware
+```php
+// routes/web.php
+Route::middleware(['auth'])->group(function () {
+    // Protected routes
+});
+```
+
+### Role-based Access Control
+```php
+// Middleware CheckRole
+Route::middleware(['role:admin,manager,staff'])->group(function () {
+    Route::resource('customers', CustomerController::class);
+});
+```
+
+### CSRF Protection
+- Semua form menggunakan `@csrf` directive
+- CSRF token otomatis di-generate Laravel
+- Protection terhadap CSRF attacks
+
+## 📊 Dashboard Features
+
+### Statistik Real-time
+- Total Services: Menghitung semua layanan
+- Total Revenue: Menghitung total pendapatan dari service notes
+- Total Vehicles: Menghitung semua kendaraan
+- Active Services: Menghitung layanan yang sedang berlangsung
+
+### Charts Interaktif
+- Line Chart: Trend layanan per bulan
+- Bar Chart: Jumlah layanan per bulan
+- Pie Charts: Status completion percentage
+
+### Progress Bars
+- Service Status: Progress layanan yang sedang berlangsung
+- Revenue Status: Progress target pendapatan
+
+## 🎨 UI/UX Features
+
+### Responsive Design
+- Bootstrap 5 untuk layout responsive
+- Custom CSS untuk styling modern
+- Mobile-first approach
+
+### Modern Interface
+- Gradient backgrounds
+- Card-based design
+- Font Awesome icons
+- Smooth animations
+
+### User Experience
+- Intuitive navigation
+- Clear feedback messages
+- Loading states
+- Form validation real-time
+
+## 🚀 Deployment
+
+### Requirements
+- PHP >= 7.4MySQL >= 5.7poser
+- Web server (Apache/Nginx)
+
+### Environment Setup
+1. Clone repository
+2. Install dependencies: `composer install`
+3. Copy `.env.example` to `.env`
+4. Generate app key: `php artisan key:generate`
+5. Configure database in `.env`
+6 Run migrations: `php artisan migrate`7. Seed database: `php artisan db:seed --class=RoleSeeder`
+8Start server: `php artisan serve`
+
